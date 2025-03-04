@@ -1,6 +1,6 @@
 ---
 title: Redis 를 Cache 로 사용 기록
-date: 2025-03-04 19:20 +0900
+date: 2025-03-04 19:20:00 +0900
 categories: [Redis,Cache]
 tags: [redis,cache]
 ---
