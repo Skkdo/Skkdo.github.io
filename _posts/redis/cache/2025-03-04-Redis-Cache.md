@@ -70,11 +70,11 @@ addModule 이 LocalDateTime 을 직렬화하기 위한 부분이고 disable 은 
 deactivateDefaultTyping 은 @Class 정보를 담지 않기 위해서 설정하는 것인데 jackson 2.10 부터는 기본값으로 되어 생략해도 됩니다.   
 #### 3. Service
 ```java
-public List<Board> getBoardTop3() {
+public List<BoardDto> getBoardTop3() {
         Object o = redisTemplate.opsForValue().get(boardKey);
         if (o instanceof List<?> resultList) {
             return resultList.stream()
-                    .map(board -> objectMapper.convertValue(board, Board.class))
+                    .map(boardDto -> objectMapper.convertValue(boardDto, BoardDto.class))
                     .toList();
         }
         return new ArrayList<>();
@@ -85,7 +85,7 @@ public List<Board> getBoardTop3() {
     }
 ```   
 boardKey 에는 key 로 사용할 String 으로 "board:" 를 넣어주었습니다.   
-getBoardTop3 에 if 문은 Redis 에서 받은 Object 를 List<Board> 인지 검증하고 반환하는 코드입니다.   
+getBoardTop3 에 if 문은 Redis 에서 받은 Object 를 List<BoardDto> 인지 검증하고 반환하는 코드입니다.   
 
 #### Scheduler   
 캐시 데이터를 게시글의 조회수, 좋아요 수에 따라 변경해야 하는데 모든 게시글에 조회수, 좋아요가 증가할 때마다 비교 후 변경하는 건   
@@ -95,7 +95,7 @@ getBoardTop3 에 if 문은 Redis 에서 받은 Object 를 List<Board> 인지 검
     public void updateBoardTop3() {
         Pageable pageable = PageRequest.of(0, 3);
         LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
-        List<Board> boardList = boardRepository.getTop3Within7Days(sevenDaysAgo, pageable);
+        List<BoardDto> boardList = boardRepository.getTop3Within7Days(sevenDaysAgo, pageable);
         redisService.setBoardTop3(boardList);
     }
 ```
